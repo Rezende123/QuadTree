@@ -53,7 +53,7 @@ void desenhaArvore() {
 /// ** 
 /// ***********************************************************************
 
-tQuadrante refrashQuads(int amountQuads) {
+tQuadrante refrashQuads(int amountQuads, int level) {
 	int width = (iWidth/(amountQuads/2));
 	int height = (iHeight/(amountQuads/2));
 
@@ -78,7 +78,7 @@ tQuadrante refrashQuads(int amountQuads) {
 	printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", auxPointY, auxPointX);
 	tPonto point = createPoint(auxPointX, auxPointY);
 	
-	return createQuad(point, width, height, amountQuads/4);
+	return createQuad(point, width, height, level);
 }
 
 tTree * makeTree(tTree * tree, int level) {
@@ -88,7 +88,7 @@ tTree * makeTree(tTree * tree, int level) {
 	// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
 
 	if (tree == NULL) {
-		tQuadrante quad = refrashQuads(amountQuads);
+		tQuadrante quad = refrashQuads(amountQuads, level);
 		tree = createTree(quad);
 		makeTree(tree, level - 1);
 		return tree;
@@ -103,7 +103,7 @@ tTree * makeTree(tTree * tree, int level) {
 
 	for (int j = 0; j < 4; j++) {
 
-		tQuadrante quad = refrashQuads(amountQuads);
+		tQuadrante quad = refrashQuads(amountQuads, level);
 		tree->treeChield[j] = createTree(quad);
 
 		// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
