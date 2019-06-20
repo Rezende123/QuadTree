@@ -14,6 +14,7 @@ int 			iHeight,
 				iWidth,
 				auxPointY, 
 				auxPointX,
+				hasNextPointX = true,
 				iLevel = 0;
 
 bool 			desenha = false;
@@ -56,31 +57,59 @@ tQuadrante refrashQuads(int amountQuads, int level) {
 	int width = (iWidth/(amountQuads/2));
 	int height = (iHeight/(amountQuads/2));
 
-	if (level == 1) printf("\n---- [ HEIGHT ] %d [ WIDTH ] %d ----\n", height, width);
+	int limitX = nextLimitPoint(width, auxPointX);
+	int limitY = nextLimitPoint(height, auxPointY);
 
-	if (auxPointY >= auxPointX) {
-		auxPointX += (width/2);
+	// if (level == 1) printf("\n||||| [ HEIGHT ] %d [ WIDTH ] %d |||||\n", height, width);
 
-		if (auxPointX > iWidth) {
-			auxPointX = width/2;
-		}
+	if (hasNextPointX) {
+		auxPointX = nextPoint(auxPointX, width, limitX);
 		
 		auxPointY += (auxPointY == 0) ? height/2:0;
-	} else {
-		auxPointY += (height/2);
 		
-		if (auxPointY > iHeight) {
-			auxPointY = iHeight;
-		}
+		hasNextPointX = false;
+	} else {
+		auxPointY = nextPoint(auxPointY, height, limitY);
 
 		auxPointX += (auxPointX == 0) ? width/2:0;
+		
+		hasNextPointX = true;
 	}
+	// if (auxPointY == limitY && auxPointX == limitX) {
+	// 	auxPointY = height/2;
+	// 	auxPointX = width/2;
+	// }
 
-	// if (level == 1) printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", auxPointY, auxPointX);
+	if (level == 1) printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", auxPointY, auxPointX);
 	
 	tPonto point = createPoint(auxPointX, auxPointY);
 	
 	return createQuad(point, width, height, level);
+}
+
+int nextPoint(int point, int vector, int limit) {
+	int addition = vector/2;
+	// printf("\t\t\t\t\t [POINT] %d [ADD] %d [LIMIT] %d", point, addition, limit);
+
+	if (point == 0) {
+		point = addition;
+	} else if ((point + addition) > limit) {
+		point = addition;
+	} else {
+		point += addition;
+	}
+
+	return point;
+}
+
+int nextLimitPoint(int vector, int point) {
+	int limit = vector;
+
+	if (point != 0) {
+		limit = (vector/2)+point;
+	}
+
+	return vector;
 }
 
 tTree * makeTree(tTree * tree, int level) {
@@ -114,7 +143,7 @@ tTree * makeTree(tTree * tree, int level) {
 void refrashSettings(int amountQuads, int level) {
 	if (level == 1) {
 		printf("\n===== [ iHEIGHT ] %d [ iWIDTH ] %d =====\n", iHeight, iWidth);
-		printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
+		// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
 	} else
 	if (level == 2) {
 		auxPointY = auxPointX = 0;
