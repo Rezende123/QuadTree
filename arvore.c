@@ -96,8 +96,12 @@ tTree * makeTree(tTree * tree, int level) {
 
 	refrashSettings(amountQuads, level);
 
+	if (level == 1 && amountQuadTree > 0) {
+		amountQuads = amountQuadTree;
+	}
+		printf("\n [ QUAD ] %d [ TREE ] %d\n", amountQuads, amountQuadTree);
+
 	for (int j = 0; j < 4; j++) {
-		amountQuads = (level == 1) ? amountQuadTree : amountQuads;
 
 		tQuadrante quad = refrashQuads(amountQuads);
 		tree->treeChield[j] = createTree(quad);
