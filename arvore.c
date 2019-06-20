@@ -14,7 +14,6 @@ int 			iHeight,
 				iWidth,
 				auxPointY, 
 				auxPointX,
-				amountQuadTree = 0,
 				iLevel = 0;
 
 bool 			desenha = false;
@@ -57,25 +56,28 @@ tQuadrante refrashQuads(int amountQuads, int level) {
 	int width = (iWidth/(amountQuads/2));
 	int height = (iHeight/(amountQuads/2));
 
+	if (level == 1) printf("\n---- [ HEIGHT ] %d [ WIDTH ] %d ----\n", height, width);
+
 	if (auxPointY >= auxPointX) {
-		if (auxPointX >= width) {
+		auxPointX += (width/2);
+
+		if (auxPointX > iWidth) {
 			auxPointX = width/2;
-		} else {
-			auxPointX += (width/2) + auxPointX;
 		}
 		
 		auxPointY += (auxPointY == 0) ? height/2:0;
 	} else {
-		if (auxPointY > height) {
-			auxPointY = height/2;
-		} else {
-			auxPointY += (height/2) + auxPointY;
+		auxPointY += (height/2);
+		
+		if (auxPointY > iHeight) {
+			auxPointY = iHeight;
 		}
 
 		auxPointX += (auxPointX == 0) ? width/2:0;
 	}
 
-	printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", auxPointY, auxPointX);
+	// if (level == 1) printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", auxPointY, auxPointX);
+	
 	tPonto point = createPoint(auxPointX, auxPointY);
 	
 	return createQuad(point, width, height, level);
@@ -84,7 +86,7 @@ tQuadrante refrashQuads(int amountQuads, int level) {
 tTree * makeTree(tTree * tree, int level) {
 	if (level <= 0) return NULL;
 
-	int amountQuads = level*4;
+	int amountQuads = pow(2,iLevel);
 	// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
 
 	if (tree == NULL) {
@@ -96,17 +98,12 @@ tTree * makeTree(tTree * tree, int level) {
 
 	refrashSettings(amountQuads, level);
 
-	if (level == 1 && amountQuadTree > 0) {
-		amountQuads = amountQuadTree;
-	}
-		printf("\n [ QUAD ] %d [ TREE ] %d\n", amountQuads, amountQuadTree);
+	// printf("\n [ QUAD ] %d [ TREE ] %d\n", amountQuads, amountQuadTree);
 
 	for (int j = 0; j < 4; j++) {
 
 		tQuadrante quad = refrashQuads(amountQuads, level);
 		tree->treeChield[j] = createTree(quad);
-
-		// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
 
 		makeTree(tree->treeChield[j], level - 1);
 	}
@@ -117,10 +114,10 @@ tTree * makeTree(tTree * tree, int level) {
 void refrashSettings(int amountQuads, int level) {
 	if (level == 1) {
 		printf("\n===== [ iHEIGHT ] %d [ iWIDTH ] %d =====\n", iHeight, iWidth);
-		auxPointY = auxPointX = 0;
-	}
+		printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
+	} else
 	if (level == 2) {
-		amountQuadTree += (amountQuads/2);
+		auxPointY = auxPointX = 0;
 	}
 }
 
@@ -187,8 +184,8 @@ void changeTree(int orientation) {
 	
 	_tree = NULL;
 	_tree = makeTree(_tree, iLevel);
-	printf("\n [ SHOW TREE ] \n");
-	showTree(_tree);
+	// printf("\n [ SHOW TREE ] \n");
+	// showTree(_tree);
 	// imageTree(_tree);
 }
 
@@ -213,7 +210,7 @@ void teclado(unsigned char key, int x, int y) {
 		case 'Q'	: 	montaArvore();
 						break;				
 		case 'i'	:
-		case 'I'	: 	desenha = !desenha;
+		case 'I'	: 	changeTree(1);// desenha = !desenha;
 						break;				
 		}
 	glutPostRedisplay();
