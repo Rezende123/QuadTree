@@ -12,8 +12,12 @@
 unsigned char* 	image = NULL;	// image file
 int 			iHeight, 
 				iWidth,
+				currentWidth = 0,
+				currentHeight = 0,
 				auxPointY, 
 				auxPointX,
+				maxPointY = 0, 
+				maxPointX = 0,
 				hasNextPointX = true,
 				iLevel = 0;
 
@@ -57,14 +61,14 @@ tQuadrante refrashQuads(int amountQuads, int level) {
 	int width = (iWidth/(amountQuads/2));
 	int height = (iHeight/(amountQuads/2));
 
-	int limitX = nextLimitPoint(width, auxPointX);
-	int limitY = nextLimitPoint(height, auxPointY);
+	int limitX = nextLimitPoint(width, maxPointX);
+	int limitY = nextLimitPoint(height, maxPointY);
 
 	// if (level == 1) printf("\n||||| [ HEIGHT ] %d [ WIDTH ] %d |||||\n", height, width);
 
 	if (hasNextPointX) {
 		auxPointX = nextPoint(auxPointX, width, limitX);
-		
+
 		auxPointY += (auxPointY == 0) ? height/2:0;
 		
 		hasNextPointX = false;
@@ -75,10 +79,7 @@ tQuadrante refrashQuads(int amountQuads, int level) {
 		
 		hasNextPointX = true;
 	}
-	// if (auxPointY == limitY && auxPointX == limitX) {
-	// 	auxPointY = height/2;
-	// 	auxPointX = width/2;
-	// }
+	refrashMeasures(width, height);
 
 	if (level == 1) printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", auxPointY, auxPointX);
 	
@@ -107,9 +108,34 @@ int nextLimitPoint(int vector, int point) {
 
 	if (point != 0) {
 		limit = (vector/2)+point;
+
+		// if (limit > vector) limit = vector;
 	}
 
-	return vector;
+	return limit;
+}
+
+void setMaxPoint (int point, int * maxPoint) {
+	if (point > *maxPoint) {
+		*maxPoint = point;
+	}
+	// printf(" [LIMIT] %d ", *maxPoint);
+}
+
+void updateCurrentVector(int newVector, int * vector) {
+	if (*vector == (newVector/2) || *vector == 0) *vector += (newVector/2);
+}
+
+void refrashMeasures(int	 width, int height) {
+	if (auxPointX > maxPointX) {
+		updateCurrentVector(width, &currentWidth);
+		// printf(" [WIDTH] %d", currentWidth);
+	} else if (auxPointY > maxPointY) {
+		updateCurrentVector(height, &currentHeight);
+		// printf(" [HEIGHT] %d", currentH		
+	}
+	setMaxPoint(auxPointX, &maxPointX);
+	setMaxPoint(auxPointY, &maxPointY);
 }
 
 tTree * makeTree(tTree * tree, int level) {
@@ -146,7 +172,7 @@ void refrashSettings(int amountQuads, int level) {
 		// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
 	} else
 	if (level == 2) {
-		auxPointY = auxPointX = 0;
+		currentHeight = currentWidth = auxPointY = auxPointX = 0;
 	}
 }
 
@@ -215,7 +241,7 @@ void changeTree(int orientation) {
 	_tree = makeTree(_tree, iLevel);
 	// printf("\n [ SHOW TREE ] \n");
 	// showTree(_tree);
-	// imageTree(_tree);
+	imageTree(_tree);
 }
 
 void montaArvore() {
@@ -240,7 +266,10 @@ void teclado(unsigned char key, int x, int y) {
 						break;				
 		case 'i'	:
 		case 'I'	: 	changeTree(1);// desenha = !desenha;
-						break;				
+						break;		
+		case 'd'	:
+		case 'D'	:	desenha = !desenha;
+						break;
 		}
 	glutPostRedisplay();
 }
