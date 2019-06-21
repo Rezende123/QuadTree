@@ -61,26 +61,26 @@ tQuadrante refrashQuads(int amountQuads, int level) {
 	int width = (iWidth/(amountQuads/2));
 	int height = (iHeight/(amountQuads/2));
 
-	int limitX = nextLimitPoint(width, maxPointX);
-	int limitY = nextLimitPoint(height, maxPointY);
-
 	// if (level == 1) printf("\n||||| [ HEIGHT ] %d [ WIDTH ] %d |||||\n", height, width);
 
 	if (hasNextPointX) {
-		auxPointX = nextPoint(auxPointX, width, limitX);
+		refrashCurrentVectors(hasNextPointX, width);
+		auxPointX = nextPoint(auxPointX, width, currentWidth);
 
-		auxPointY += (auxPointY == 0) ? height/2:0;
+		auxPointY += (auxPointY == 0) ? currentHeight/2:0;
 		
 		hasNextPointX = false;
 	} else {
-		auxPointY = nextPoint(auxPointY, height, limitY);
+		refrashCurrentVectors(hasNextPointX, height);
+		auxPointY = nextPoint(auxPointY, height, currentHeight);
 
-		auxPointX += (auxPointX == 0) ? width/2:0;
+		auxPointX += (auxPointX == 0) ? currentWidth/2:0;
 		
 		hasNextPointX = true;
 	}
-	refrashMeasures(width, height);
+	// refrashMeasures(width, height);
 
+	// if (level == 1) printf("\n---- [ LIMIT_Y ] %d [ LIMIT_X ] %d ----\n", currentHeight, currentWidth);
 	if (level == 1) printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", auxPointY, auxPointX);
 	
 	tPonto point = createPoint(auxPointX, auxPointY);
@@ -89,13 +89,13 @@ tQuadrante refrashQuads(int amountQuads, int level) {
 }
 
 int nextPoint(int point, int vector, int limit) {
-	int addition = vector/2;
+	int addition = limit/2;
 	// printf("\t\t\t\t\t [POINT] %d [ADD] %d [LIMIT] %d", point, addition, limit);
 
 	if (point == 0) {
 		point = addition;
 	} else if ((point + addition) > limit) {
-		point = addition;
+		point = addition/2;
 	} else {
 		point += addition;
 	}
@@ -103,39 +103,16 @@ int nextPoint(int point, int vector, int limit) {
 	return point;
 }
 
-int nextLimitPoint(int vector, int point) {
-	int limit = vector;
 
-	if (point != 0) {
-		limit = (vector/2)+point;
-
-		// if (limit > vector) limit = vector;
+void refrashCurrentVectors(bool hasNextPointX, int vector) {
+	if (currentWidth == (vector*2) && currentHeight == (vector*2)) {
+		currentHeight /= 2;
+	} else
+	if (hasNextPointX) {
+		currentWidth += vector;
+	} else {
+		currentHeight += vector;
 	}
-
-	return limit;
-}
-
-void setMaxPoint (int point, int * maxPoint) {
-	if (point > *maxPoint) {
-		*maxPoint = point;
-	}
-	// printf(" [LIMIT] %d ", *maxPoint);
-}
-
-void updateCurrentVector(int newVector, int * vector) {
-	if (*vector == (newVector/2) || *vector == 0) *vector += (newVector/2);
-}
-
-void refrashMeasures(int	 width, int height) {
-	if (auxPointX > maxPointX) {
-		updateCurrentVector(width, &currentWidth);
-		// printf(" [WIDTH] %d", currentWidth);
-	} else if (auxPointY > maxPointY) {
-		updateCurrentVector(height, &currentHeight);
-		// printf(" [HEIGHT] %d", currentH		
-	}
-	setMaxPoint(auxPointX, &maxPointX);
-	setMaxPoint(auxPointY, &maxPointY);
 }
 
 tTree * makeTree(tTree * tree, int level) {
@@ -156,7 +133,7 @@ tTree * makeTree(tTree * tree, int level) {
 	// printf("\n [ QUAD ] %d [ TREE ] %d\n", amountQuads, amountQuadTree);
 
 	for (int j = 0; j < 4; j++) {
-
+		printf("\n [%d]", j);
 		tQuadrante quad = refrashQuads(amountQuads, level);
 		tree->treeChield[j] = createTree(quad);
 
@@ -192,7 +169,7 @@ void showTree(tTree * tree) {
 void imageTree(tTree * tree) {
 	if (tree == NULL) return;
 	
-	printf("=========[ LEVEL ] %d=========", tree->quadtree.nivel);
+	printf("\n=========[ PAINT LEVEL ] %d=========", tree->quadtree.nivel);
 	paintImage(tree->quadtree.pBase.x, tree->quadtree.pBase.y);
 
 	if (tree->quadtree.nivel == 1) return;
@@ -205,7 +182,7 @@ void imageTree(tTree * tree) {
 
 void paintImage(int width, int height) {
 	int halfColor = 0;
-	printf("\n---- [ HEIGHT ] %d [ WIDTH ] %d ----\n", height, width);
+	printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", height, width);
 	for(int i = 0; i < width; i++) {
 		for(int j = 0; j < height; j++) {
 			int color = image[j*height+i*width];

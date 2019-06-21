@@ -14,6 +14,7 @@ int nextPoint(int point, int vector, int limit);
 int nextLimitPoint(int vector, int point);
 void setMaxPoint (int point, int * maxPoint);
 void refrashMeasures(int width, int height);
+void refrashCurrentVectors(bool hasNextPointX, int vector);
 tTree * makeTree(tTree * tree, int level);
 void showTree(tTree * tree);
 void changeTree(int orientation);
