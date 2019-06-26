@@ -19,6 +19,7 @@ int 			iHeight,
 				maxPointY = 0, 
 				maxPointX = 0,
 				hasNextPointX = true,
+				resetMeasures = true,
 				iLevel = 0;
 
 bool 			desenha = false;
@@ -147,9 +148,13 @@ void refrashSettings(int amountQuads, int level) {
 	if (level == 1) {
 		printf("\n===== [ iHEIGHT ] %d [ iWIDTH ] %d =====\n", iHeight, iWidth);
 		// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
+		if (resetMeasures) {
+			currentHeight = currentWidth = 0;
+			resetMeasures = false;
+		}
 	} else
 	if (level == 2) {
-		currentHeight = currentWidth = auxPointY = auxPointX = 0;
+		auxPointY = auxPointX = 0;
 	}
 }
 
@@ -214,6 +219,8 @@ void changeTree(int orientation) {
 	
 	printf("\n\t BOTTOM LEVEL %d\n", iLevel);
 	
+	resetMeasures = true;
+
 	_tree = NULL;
 	_tree = makeTree(_tree, iLevel);
 	// printf("\n [ SHOW TREE ] \n");
