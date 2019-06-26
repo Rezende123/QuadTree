@@ -225,7 +225,7 @@ void changeTree(int orientation) {
 	_tree = makeTree(_tree, iLevel);
 	// printf("\n [ SHOW TREE ] \n");
 	// showTree(_tree);
-	imageTree(_tree);
+	// imageTree(_tree);
 }
 
 void montaArvore() {
