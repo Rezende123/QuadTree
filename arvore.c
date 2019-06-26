@@ -57,21 +57,21 @@ void desenhaArvore() {
 /// ** 
 /// ***********************************************************************
 
-tQuadrante refrashQuads(int amountQuads, int level) {
+tQuadrante refreshQuads(int amountQuads, int level) {
 	int width = (iWidth/(amountQuads/2));
 	int height = (iHeight/(amountQuads/2));
 
 	// if (level == 1) printf("\n||||| [ HEIGHT ] %d [ WIDTH ] %d |||||\n", height, width);
 
 	if (hasNextPointX) {
-		refrashCurrentVectors(hasNextPointX, width);
+		refreshCurrentVectors(hasNextPointX, width);
 		auxPointX = nextPoint(auxPointX, width, currentWidth);
 
 		auxPointY += (auxPointY == 0) ? currentHeight/2:0;
 		
 		hasNextPointX = false;
 	} else {
-		refrashCurrentVectors(hasNextPointX, height);
+		refreshCurrentVectors(hasNextPointX, height);
 		auxPointY = nextPoint(auxPointY, height, currentHeight);
 
 		auxPointX += (auxPointX == 0) ? currentWidth/2:0;
@@ -104,7 +104,7 @@ int nextPoint(int point, int vector, int limit) {
 }
 
 
-void refrashCurrentVectors(bool hasNextPointX, int vector) {
+void refreshCurrentVectors(bool hasNextPointX, int vector) {
 	if (currentWidth == (vector*2) && currentHeight == (vector*2)) {
 		currentHeight /= 2;
 	} else
@@ -122,7 +122,7 @@ tTree * makeTree(tTree * tree, int level) {
 	// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
 
 	if (tree == NULL) {
-		tQuadrante quad = refrashQuads(amountQuads, level);
+		tQuadrante quad = refreshQuads(amountQuads, level);
 		tree = createTree(quad);
 		makeTree(tree, level - 1);
 		return tree;
@@ -134,7 +134,7 @@ tTree * makeTree(tTree * tree, int level) {
 
 	for (int j = 0; j < 4; j++) {
 		printf("\n [%d]", j);
-		tQuadrante quad = refrashQuads(amountQuads, level);
+		tQuadrante quad = refreshQuads(amountQuads, level);
 		tree->treeChield[j] = createTree(quad);
 
 		makeTree(tree->treeChield[j], level - 1);
