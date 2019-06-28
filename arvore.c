@@ -67,14 +67,14 @@ tQuadrante refreshQuads(int amountQuads, int level, int idQuad) {
 	int height = (iHeight/(amountQuads/2));
 
 	if (hasNextPointX) {
-		printf(" [X] ");
+		// printf(" [X] ");
 		refreshCurrentVectors(width, idQuad);
 		if (idQuad == 0 && auxPointY != 0) {
 			auxPointY -= height;
 		} 
 		auxPointX = nextPoint(auxPointX, width, currentWidth);
 	} else {
-		printf(" [Y] ");
+		// printf(" [Y] ");
 		refreshCurrentVectors(height, idQuad);
 		if (idQuad == 0 && auxPointX != 0) {
 			auxPointX -= width;
@@ -151,7 +151,7 @@ tTree * makeTree(tTree * tree, int level) {
 void refrashSettings(int amountQuads, int level, bool isLeft) {
 	if (level == 1) {
 		if (isLeft) {
-			printf(" [XAU] ");	
+			// printf(" [REINIT] ");	
 			hasNextPointX = false;
 			// currentHeight = currentWidth = (iWidth/(amountQuads/2));
 			// currentHeight = currentWidth *= 2;
@@ -163,7 +163,7 @@ void refrashSettings(int amountQuads, int level, bool isLeft) {
 	if (level == 2) {
 		auxPointY = auxPointX = 0;
 		if (resetMeasures) {
-			printf(" [OI] ");
+			// printf(" [INIT] ");
 			currentHeight = currentWidth = 0;
 			resetMeasures = false;
 			hasNextPointX = false;
@@ -188,9 +188,8 @@ void showTree(tTree * tree) {
 void imageTree(tTree * tree) {
 	if (tree == NULL) return;
 	
-	printf("\n=========[ PAINT LEVEL ] %d=========", tree->quadtree.nivel);
-	paintImage(tree->quadtree.pBase.x, tree->quadtree.pBase.y,
-	 	tree->quadtree.width, tree->quadtree.height);
+	printf("\n========= [ PAINT LEVEL ] %d =========", tree->quadtree.nivel);
+	paintImage(& tree->quadtree);
 
 	if (tree->quadtree.nivel == 1) return;
 	
@@ -201,26 +200,59 @@ void imageTree(tTree * tree) {
 }
 
 // TODO: CÁLCULO DA COR POR QUADRANTE
-void paintImage(int p_x, int p_y, int width, int height) {
-	int halfColor = 0;
-	printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", p_y, p_x);
-	printf("\n---- [ HEIGHT ] %d [ WIDTH ] %d ----\n", height, width);
-	for(int i = p_x; i < width; i++) {
-		for(int j = p_y; j < height; j++) {
-			int color = image[j*height+i*width];
+// TODO: CÁLCULO DO ERRO
+// TODO: EXIBIÇÃO DE AMBOS
+void paintImage(tQuadrante * quad) {
+	int p_x = quad->pBase.x;
+	int p_y = quad->pBase.y;
+	int width = quad->width;
+	int height = quad->height;
 
-			halfColor += color;
-		}
-	}
-	halfColor /= (width*height);
-	printf("\n--- [ HALF ] %d ----\n", halfColor);
+	defineHalfColorAndError(quad);
+
+	printf("\n--- [ HALF ] %d ----\n", quad->cor);
+	printf("\n--- [ ERROR ] %f ----\n", quad->erro);
 
 	tPonto point_1, point_2;
 
 	point_1 = createPoint(p_x, p_y);
 	point_2 = createPoint(p_x + width, p_y + height);
 
-	desenhaQuadrante(point_1, point_2, halfColor);
+	desenhaQuadrante(point_1, point_2, quad->cor);
+}
+
+void defineHalfColorAndError(tQuadrante * quad) {
+	int p_x = quad->pBase.x;
+	int p_y = quad->pBase.y;
+	int width = quad->width;
+	int height = quad->height;
+	int halfColor = 0;
+	float error = 0;
+
+	printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", p_y, p_x);
+	printf("\n---- [ HEIGHT ] %d [ WIDTH ] %d ----\n", height, width);
+
+	for(int z = 0; z < 2; z++) {
+		for(int i = p_x; i < width; i++) {
+			for(int j = p_y; j < height; j++) {
+				int color = image[j*height+i*width];
+
+				if (z == 0) {
+					halfColor += color;
+				} else {
+					error += abs(halfColor - color);
+				}
+			}
+		}
+
+		if (z == 0) {
+			halfColor /= (width*height);
+		} else {
+			error /= (width*height);
+		}
+	}
+	quad->cor = halfColor;
+	quad->erro = error;
 }
 
 void changeTree(int orientation) {
@@ -249,7 +281,7 @@ void changeTree(int orientation) {
 
 void montaArvore() {
 	
-	printf("Aqui eu vou montar a arvore\n");
+	// printf("Aqui eu vou montar a arvore\n");
 	
 	// codifique aqui a sua rotina de montagem da arvore 
 	changeTree(0);
