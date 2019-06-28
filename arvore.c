@@ -18,9 +18,8 @@ int 			iHeight,
 				auxPointX,
 				maxPointY = 0, 
 				maxPointX = 0,
-				hasNextPointX = true,
+				hasNextPointX,
 				resetMeasures = true,
-				isTipBottonOfQuad = false,
 				iLevel = 0;
 
 bool 			desenha = false;
@@ -59,25 +58,29 @@ void desenhaArvore() {
 /// ** 
 /// ***********************************************************************
 
-tQuadrante refreshQuads(int amountQuads, int level) {
+tQuadrante refreshQuads(int amountQuads, int level, int idQuad) {
 	int width = (iWidth/(amountQuads/2));
 	int height = (iHeight/(amountQuads/2));
 
 	if (hasNextPointX) {
-		refreshCurrentVectors(hasNextPointX, width);
+		printf(" [X] ");
+		refreshCurrentVectors(width, idQuad);
+		if (idQuad == 0) {
+			auxPointY = 0;
+		} 
 		auxPointX = nextPoint(auxPointX, width, currentWidth);
-
-		auxPointY += (auxPointY == 0) ? currentHeight/2:0;
 	} else {
-		refreshCurrentVectors(hasNextPointX, height);
+		printf(" [Y] ");
+		refreshCurrentVectors(height, idQuad);
+		if (idQuad == 0) {
+			auxPointX = 0;
+		} 
 		auxPointY = nextPoint(auxPointY, height, currentHeight);
-
-		auxPointX += (auxPointX == 0) ? currentWidth/2:0;
 	}
 	// refrashMeasures(width, height);
 
 	// if (level == 1) printf("\n---- [ HEIGHT ] %d [ WIDTH ] %d ----\n", height, width);
-	if (level == 1) printf("\n---- [ LIMIT_Y ] %d [ LIMIT_X ] %d ----\n", currentHeight, currentWidth);
+	// if (level == 1) printf("\n---- [ LIMIT_Y ] %d [ LIMIT_X ] %d ----\n", currentHeight, currentWidth);
 	if (level == 1) printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", auxPointY, auxPointX);
 	
 	tPonto point = createPoint(auxPointX, auxPointY);
@@ -85,38 +88,29 @@ tQuadrante refreshQuads(int amountQuads, int level) {
 	return createQuad(point, width, height, level);
 }
 
-int nextPoint(int point, int vector, int limit) {
-	int addition = limit/2;
-	// printf("\t\t\t\t\t [POINT] %d [ADD] %d [LIMIT] %d", point, addition, limit);
+int nextPoint(int point, int vector, int currentLocation) {
+	printf("\t\t\t\t\t [POINT] %d [VECTOR] %d [CurrentLocation] %d", point, vector,currentLocation);
+	point = currentLocation - vector;
 
-	if (point == 0) {
-		point = addition;
-	} else if ((point + addition) > limit) {
-		point = addition/2;
-	} else {
-		point += addition;
+	if (point < 0) {
+		point = 0;
 	}
 
 	return point;
 }
 
 
-void refreshCurrentVectors(bool _hasNextPointX, int vector) {
-	if (auxPointX == auxPointY && isTipBottonOfQuad) {
+void refreshCurrentVectors(int vector, int idQuad) {
+	if (idQuad == 3) {
 		currentHeight /= 2;
 		hasNextPointX = true; 
-		isTipBottonOfQuad = false;
 	} else
-	if (_hasNextPointX) {
+	if (hasNextPointX) {
 		currentWidth += vector;
 		hasNextPointX = false;
 	} else {
 		currentHeight += vector;
 		hasNextPointX = true;
-	}
-	if (auxPointX == auxPointY &&
-	 currentWidth != 0 && currentHeight != 0 ) {
-		isTipBottonOfQuad = true;
 	}
 }
 
@@ -127,7 +121,7 @@ tTree * makeTree(tTree * tree, int level) {
 	// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
 
 	if (tree == NULL) {
-		tQuadrante quad = refreshQuads(amountQuads, level);
+		tQuadrante quad = refreshQuads(amountQuads, level, 0);
 		tree = createTree(quad);
 		makeTree(tree, level - 1);
 		return tree;
@@ -139,21 +133,28 @@ tTree * makeTree(tTree * tree, int level) {
 
 	for (int j = 0; j < 4; j++) {
 		printf("\n [%d]", j);
-		tQuadrante quad = refreshQuads(amountQuads, level);
+		tQuadrante quad = refreshQuads(amountQuads, level, j);
 		tree->treeChield[j] = createTree(quad);
 
 		makeTree(tree->treeChield[j], level - 1);
 	}
 
-	printf(" [XAU] ");
+	refrashSettings(0, level);
 
 	return tree;
 }
 
 void refrashSettings(int amountQuads, int level) {
 	if (level == 1) {
-		printf("\n===== [ iHEIGHT ] %d [ iWIDTH ] %d =====\n", iHeight, iWidth);
-		// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
+		if (amountQuads == 0) {
+			printf(" [XAU] ");	
+			// currentHeight = currentWidth = (iWidth/(amountQuads/2));
+			// currentHeight = currentWidth *= 2;
+			// currentHeight = currentWidth;
+		} else {
+			printf("\n===== [ iHEIGHT ] %d [ iWIDTH ] %d =====\n", iHeight, iWidth);
+			// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
+		}
 	} else
 	if (level == 2) {
 		auxPointY = auxPointX = 0;
@@ -161,6 +162,7 @@ void refrashSettings(int amountQuads, int level) {
 			printf(" [OI] ");
 			currentHeight = currentWidth = 0;
 			resetMeasures = false;
+			hasNextPointX = false;
 		}
 	}
 }

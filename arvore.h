@@ -9,12 +9,12 @@ void desenho(void);
 
 void bottomLevel();
 
-tQuadrante refrashQuads(int amountQuads, int level);
+tQuadrante refrashQuads(int amountQuads, int level, int idQuad);
 int nextPoint(int point, int vector, int limit);
 int nextLimitPoint(int vector, int point);
 void setMaxPoint (int point, int * maxPoint);
 void refreshMeasures(int width, int height);
-void refreshCurrentVectors(bool _hasNextPointX, int vector);
+void refreshCurrentVectors(int vector, int idQuad);
 tTree * makeTree(tTree * tree, int level);
 void showTree(tTree * tree);
 void changeTree(int orientation);
