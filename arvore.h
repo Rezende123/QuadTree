@@ -18,8 +18,9 @@ void refreshCurrentVectors(int vector, int idQuad);
 tTree * makeTree(tTree * tree, int level);
 void showTree(tTree * tree);
 void changeTree(int orientation);
-void paintImage(int width, int height);
-void refrashSettings(int amountQuads, int level);
+void imageTree(tTree * tree);
+void paintImage(int p_x, int p_y, int width, int height);
+void refrashSettings(int amountQuads, int level, bool isLeft);
 
 #endif	// __ARVORE__
 

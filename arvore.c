@@ -32,14 +32,18 @@ tTree * _tree;
 
 void desenhaArvore() {
 
-	printf("Aqui eu vou desenhar a arvore\n");
+	// printf("Aqui eu vou desenhar a arvore\n");
 	
 	// rotina que deve ser implementada para visualizacao da arvore
 	// utilize a rotina desenhaQuadrante(p0, p1, cor)
 	// fornecendo os pontos inicial e final do quadrante e a sua cor
 	// funcao do valor do pixel ou da regiao que voce quer desenhar
-	
-	changeTree(1);
+	if (_tree != NULL) {
+		system("clear");
+		imageTree(_tree);
+	} else {
+		printf(" NO HAVE TREE ");
+	}
 	// tPonto p0, p1;
 	 
 	// p0.x = p0.y = 0;
@@ -65,22 +69,22 @@ tQuadrante refreshQuads(int amountQuads, int level, int idQuad) {
 	if (hasNextPointX) {
 		printf(" [X] ");
 		refreshCurrentVectors(width, idQuad);
-		if (idQuad == 0) {
-			auxPointY = 0;
+		if (idQuad == 0 && auxPointY != 0) {
+			auxPointY -= height;
 		} 
 		auxPointX = nextPoint(auxPointX, width, currentWidth);
 	} else {
 		printf(" [Y] ");
 		refreshCurrentVectors(height, idQuad);
-		if (idQuad == 0) {
-			auxPointX = 0;
+		if (idQuad == 0 && auxPointX != 0) {
+			auxPointX -= width;
 		} 
 		auxPointY = nextPoint(auxPointY, height, currentHeight);
 	}
 	// refrashMeasures(width, height);
 
 	// if (level == 1) printf("\n---- [ HEIGHT ] %d [ WIDTH ] %d ----\n", height, width);
-	// if (level == 1) printf("\n---- [ LIMIT_Y ] %d [ LIMIT_X ] %d ----\n", currentHeight, currentWidth);
+	if (level == 1) printf("\n---- [ LIMIT_Y ] %d [ LIMIT_X ] %d ----\n", currentHeight, currentWidth);
 	if (level == 1) printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", auxPointY, auxPointX);
 	
 	tPonto point = createPoint(auxPointX, auxPointY);
@@ -127,7 +131,7 @@ tTree * makeTree(tTree * tree, int level) {
 		return tree;
 	}
 
-	refrashSettings(amountQuads, level);
+	refrashSettings(amountQuads, level, false);
 
 	// printf("\n [ QUAD ] %d [ TREE ] %d\n", amountQuads, amountQuadTree);
 
@@ -139,18 +143,18 @@ tTree * makeTree(tTree * tree, int level) {
 		makeTree(tree->treeChield[j], level - 1);
 	}
 
-	refrashSettings(0, level);
+	refrashSettings(amountQuads, level, true);
 
 	return tree;
 }
 
-void refrashSettings(int amountQuads, int level) {
+void refrashSettings(int amountQuads, int level, bool isLeft) {
 	if (level == 1) {
-		if (amountQuads == 0) {
+		if (isLeft) {
 			printf(" [XAU] ");	
+			hasNextPointX = false;
 			// currentHeight = currentWidth = (iWidth/(amountQuads/2));
 			// currentHeight = currentWidth *= 2;
-			// currentHeight = currentWidth;
 		} else {
 			printf("\n===== [ iHEIGHT ] %d [ iWIDTH ] %d =====\n", iHeight, iWidth);
 			// printf("\n[ AMOUNT ] %d | [ LEVEL ] %d", amountQuads, level);
@@ -185,7 +189,8 @@ void imageTree(tTree * tree) {
 	if (tree == NULL) return;
 	
 	printf("\n=========[ PAINT LEVEL ] %d=========", tree->quadtree.nivel);
-	paintImage(tree->quadtree.pBase.x, tree->quadtree.pBase.y);
+	paintImage(tree->quadtree.pBase.x, tree->quadtree.pBase.y,
+	 	tree->quadtree.width, tree->quadtree.height);
 
 	if (tree->quadtree.nivel == 1) return;
 	
@@ -196,11 +201,12 @@ void imageTree(tTree * tree) {
 }
 
 // TODO: CÁLCULO DA COR POR QUADRANTE
-void paintImage(int width, int height) {
+void paintImage(int p_x, int p_y, int width, int height) {
 	int halfColor = 0;
-	printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", height, width);
-	for(int i = 0; i < width; i++) {
-		for(int j = 0; j < height; j++) {
+	printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", p_y, p_x);
+	printf("\n---- [ HEIGHT ] %d [ WIDTH ] %d ----\n", height, width);
+	for(int i = p_x; i < width; i++) {
+		for(int j = p_y; j < height; j++) {
 			int color = image[j*height+i*width];
 
 			halfColor += color;
@@ -211,17 +217,19 @@ void paintImage(int width, int height) {
 
 	tPonto point_1, point_2;
 
-	point_1 = createPoint(iWidth - width, iHeight - height);
-	point_2 = createPoint(iWidth - (2 * width), iHeight - (2 * height));
+	point_1 = createPoint(p_x, p_y);
+	point_2 = createPoint(p_x + width, p_y + height);
 
 	desenhaQuadrante(point_1, point_2, halfColor);
 }
 
 void changeTree(int orientation) {
-	if (orientation == 0) {
-		--iLevel;
-	} else {
-		++iLevel;
+	system("clear");
+	switch(orientation) {
+		case 0: --iLevel;
+			break;
+		case 1: ++iLevel;
+			break;
 	}
 
 	if (iLevel < 0) {
@@ -257,10 +265,10 @@ void teclado(unsigned char key, int x, int y) {
 		case 27		: 	exit(0);
 						break;				
 		case 'q'	:
-		case 'Q'	: 	montaArvore();
+		case 'Q'	: 	changeTree(0);
 						break;				
 		case 'i'	:
-		case 'I'	: 	changeTree(1);// desenha = !desenha;
+		case 'I'	: 	changeTree(1);
 						break;		
 		case 'd'	:
 		case 'D'	:	desenha = !desenha;
