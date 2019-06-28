@@ -14,6 +14,7 @@ typedef struct	{ 	tPonto	pBase;
 					float	erro;
 				} 	tQuadrante;
 				
+// TODO: DEFINIÇÃO DO TAD
 typedef struct tree {
 	tQuadrante quadtree;
 

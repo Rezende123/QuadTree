@@ -5,6 +5,8 @@
 
 #include "EstruturasDeDados.h"
 
+// TODO: INICIALIZAÇÃO DOS TAD
+
 tTree * createTree(tQuadrante quad) {
     tTree * tree = malloc(sizeof (tTree));
 

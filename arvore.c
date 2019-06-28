@@ -180,6 +180,7 @@ void showTree(tTree * tree) {
 	printf("\n");
 }
 
+// TODO: VISUALIZAÇÃO POR NÍVEL
 void imageTree(tTree * tree) {
 	if (tree == NULL) return;
 	
@@ -194,6 +195,7 @@ void imageTree(tTree * tree) {
 	printf("\n");
 }
 
+// TODO: CÁLCULO DA COR POR QUADRANTE
 void paintImage(int width, int height) {
 	int halfColor = 0;
 	printf("\n---- [ POINT_Y ] %d [ POINT_X ] %d ----\n", height, width);
