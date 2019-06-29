@@ -45,6 +45,7 @@ void desenhaArvore() {
 /// ** 
 /// ***********************************************************************
 
+// DEFINIÇÃO DOS PONTOS DE UM QUADRANTE
 tQuadrante refreshQuads(int amountQuads, int level, int idQuad) {
 	int width = (iWidth/(amountQuads/2));
 	int height = (iHeight/(amountQuads/2));
@@ -84,7 +85,6 @@ int nextPoint(int point, int vector, int currentLocation) {
 
 	return point;
 }
-
 
 void refreshCurrentVectors(int vector, int idQuad) {
 	if (idQuad == 3) {
