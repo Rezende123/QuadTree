@@ -8,11 +8,11 @@ O projeto consiste na criação de uma árvore, onde cada nó terá quatro filho
 
 Para executar o código (em ambiente linux-ubuntu) basta baixar as bibliotecas, executar o arquivo "Makefile" uma vez e depois o comando:
 
-        [gcc arvore.c EstruturasDeDados.c winGL.c -o arvore -lGL -lGLU -lglut -lSOIL -lm]
+        gcc arvore.c EstruturasDeDados.c winGL.c -o arvore -lGL -lGLU -lglut -lSOIL -lm
 
 para gerar o arquivo "arvore" e depois basta rodar o comando:
 
-        [./arvore]
+        ./arvore
 
 ## CÓDIGO
 
